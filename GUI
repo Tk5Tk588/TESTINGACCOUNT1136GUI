@@ -1,0 +1,146 @@
+--[whats 9+10? 21🤓☝️]--
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Find F3X SyncAPI tool
+local tool
+for _,v in player:GetDescendants() do
+    if v.Name == "SyncAPI" then
+        tool = v.Parent
+    end
+end
+for _,v in ReplicatedStorage:GetDescendants() do
+    if v.Name == "SyncAPI" then
+        tool = v.Parent
+    end
+end
+
+local remote = tool.SyncAPI.ServerEndpoint
+local function _(args)
+    remote:InvokeServer(unpack(args))
+end
+
+-- GUI setup
+local gui = Instance.new("ScreenGui")
+gui.Name = "TESTINGACCOUNT1136GUI"
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 250, 0, 400)
+frame.Position = UDim2.new(0, 20, 0, 100)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+local titleBar = Instance.new("TextLabel")
+titleBar.Size = UDim2.new(1, 0, 0, 25)
+titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+titleBar.Text = "TESTINGACCOUNT1136GUI"
+titleBar.TextColor3 = Color3.fromRGB(255,255,255)
+titleBar.Parent = frame
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 25, 1, 0)
+closeBtn.Position = UDim2.new(1, -25, 0, 0)
+closeBtn.Text = "X"
+closeBtn.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.Parent = titleBar
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 25, 1, 0)
+minBtn.Position = UDim2.new(1, -50, 0, 0)
+minBtn.Text = "-"
+minBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+minBtn.TextColor3 = Color3.new(1,1,1)
+minBtn.Parent = titleBar
+
+local minimized = false
+minBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        frame.Size = UDim2.new(0, 250, 0, 25)
+    else
+        frame.Size = UDim2.new(0, 250, 0, 400)
+    end
+end)
+
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -10, 1, -35)
+scroll.Position = UDim2.new(0, 5, 0, 30)
+scroll.CanvasSize = UDim2.new(0,0,0,0)
+scroll.ScrollBarThickness = 8
+scroll.BackgroundTransparency = 1
+scroll.Parent = frame
+
+-- Utility function
+local function makeButton(name, yPos, command)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 25)
+    btn.Position = UDim2.new(0, 5, 0, yPos)
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Parent = scroll
+    btn.MouseButton1Click:Connect(function()
+        remote:InvokeServer(command)
+    end)
+end
+
+-- Gear list (extended)
+local gearList = {
+    {"RC7 Cloud (Fuse Bomb)", ";gear me 11563251"},
+    {"Ban Hammer", ";gear me 10468797"},
+    {"Gun", ";gear me 95354288"},
+    {"Timmy Gun", ";gear me 116693764"},
+    {"Hyperlaser Gun", ";gear me 130113146"},
+    {"Doge", ";gear me 257810065"},
+    {"Mad Murder Knife", ";gear me 170897263"},
+    {"Rainbow Periastron Omega", ";gear me 159229806"},
+    {"Moneybag", ";gear me 16722267"},
+    {"Phone Throw Away", ";gear me 88146505"},
+    {"Morph Gun", ";gear me 29099749"},
+    {"Lucky Laser Gun", ";gear me 149612167"},
+    {"Knife", ";gear me 121946387"},
+    {"Car", ";gear me 477911027"},
+    {"Sword", ";gear me 147143863"},
+    {"Noir Periastron Psi", ";gear me 120307951"},
+    {"Book", ";gear me 49491736"},
+    {"Game", ";gear me 58574445"},
+    {"8-Bit Pumpkin Launcher", ";gear me 1132887630"},
+    {"Frying Pan", ";gear me 24346755"},
+    {"Balloon", ";gear me 430066424"},
+    {"Snowball", ";gear me 19328185"},
+    {"Watermelon", ";gear me 22787248"},
+    {"Monster Mash Potion", ";gear me 36042821"},
+    {"Treehouse", ";gear me 119917513"},
+    {"Dance Grenade", ";gear me 65545955"},
+    {"Taxi", ";gear me 125013849"},
+    {"Cake", ";gear me 107458461"},
+    {"Laser", ";gear me 115377964"},
+    {"C4", ";gear me 104642566"},
+    {"Bubblegum", ";gear me 11895536"},
+    {"Geolocator", ";gear me 15668963"},
+    {"Raig Table", ";gear me 110789105"},
+    {"Space Sword", ";gear me 566780253"},
+    {"Water Balloon", ";gear me 29100543"},
+    {"Sauce", ";gear me 31314931"},
+    {"Potion Purple", ";gear me 154727251"},
+    -- Newly merged items
+    {"Paint Can", ";gear me 18474459"},
+    {"Banana Peel", ";gear me 29100449"},
+    {"Powerful Paintbrush", ";gear me 2261478942"},
+}
+
+-- Generate buttons dynamically
+local y = 0
+for _, item in ipairs(gearList) do
+    makeButton(item[1], y, item[2])
+    y = y + 30
+end
+scroll.CanvasSize = UDim2.new(0,0,0,y)
