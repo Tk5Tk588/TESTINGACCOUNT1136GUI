@@ -126,6 +126,7 @@ local gearList = {
     {"Banana Peel", ";gear me 29100449"},
     {"Powerful Paintbrush", ";gear me 2261478942"},
     {"Bloxiade", ";gear me 17237662"},
+    {"Inglaciator 6000", ";gear me 185422055"}, -- NEW ENTRY
 }
 
 -- Generate buttons dynamically
