@@ -1,6 +1,6 @@
--- TESTINGACCOUNT1136GUI (Force to chat with /e ;gear me)
+-- TESTINGACCOUNT1136GUI (Force to chat with ;gear me)
 -- Scrollable, draggable, close, minimize/maximize
--- Buttons send /e ;gear me <ID> into chat
+-- Buttons send ;gear me <ID> into chat
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
@@ -11,7 +11,7 @@ local ChatRemote = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents")
 
 -- Utility function to send command into chat
 local function sendCommand(id)
-    ChatRemote:FireServer("/e ;gear me "..id, "All")
+    ChatRemote:FireServer(";gear me "..id, "All")
 end
 
 -- GUI setup
@@ -85,7 +85,7 @@ local function makeButton(name, yPos, id)
     end)
 end
 
--- Gear list (Fuse Bomb fixed + extras)
+-- Gear list
 local gearList = {
     {"Fuse Bomb", 11563251},
     {"Ban Hammer", 10468797},
