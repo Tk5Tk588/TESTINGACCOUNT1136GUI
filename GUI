@@ -1,25 +1,16 @@
---[whats 9+10? 21🤓☝️]--
+-- TESTINGACCOUNT1136GUI (Fixed)
+-- Scrollable, draggable, close, minimize/maximize
+-- All gear buttons corrected, Fuse Bomb properly labeled
+
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Find F3X SyncAPI tool
-local tool
-for _,v in player:GetDescendants() do
-    if v.Name == "SyncAPI" then
-        tool = v.Parent
-    end
-end
-for _,v in ReplicatedStorage:GetDescendants() do
-    if v.Name == "SyncAPI" then
-        tool = v.Parent
-    end
-end
-
-local remote = tool.SyncAPI.ServerEndpoint
-local function _(args)
-    remote:InvokeServer(unpack(args))
-end
+-- HDAdmin remote (for ;gear me commands)
+local RequestCommand = ReplicatedStorage
+    :WaitForChild("HDAdminHDClient")
+    .Signals
+    .RequestCommandSilent
 
 -- GUI setup
 local gui = Instance.new("ScreenGui")
@@ -88,11 +79,11 @@ local function makeButton(name, yPos, command)
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Parent = scroll
     btn.MouseButton1Click:Connect(function()
-        remote:InvokeServer(command)
+        RequestCommand:InvokeServer(command)
     end)
 end
 
--- Gear list (extended)
+-- Gear list (fixed Fuse Bomb + extras)
 local gearList = {
     {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
@@ -128,13 +119,13 @@ local gearList = {
     {"Geolocator", ";gear me 15668963"},
     {"Raig Table", ";gear me 110789105"},
     {"Space Sword", ";gear me 566780253"},
-    {"Water Balloon", ";gear me 29100543"},
+    {"Water Balloon", ";gear me 29100443"},
     {"Sauce", ";gear me 31314931"},
     {"Potion Purple", ";gear me 154727251"},
-    -- Newly merged items
     {"Paint Can", ";gear me 18474459"},
     {"Banana Peel", ";gear me 29100449"},
     {"Powerful Paintbrush", ";gear me 2261478942"},
+    {"Bloxiade", ";gear me 17237662"},
 }
 
 -- Generate buttons dynamically
