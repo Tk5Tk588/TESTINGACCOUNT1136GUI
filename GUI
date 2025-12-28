@@ -1,18 +1,9 @@
--- TESTINGACCOUNT1136GUI (Force to chat with ;gear me)
+-- TESTINGACCOUNT1136GUI (Copy to clipboard)
 -- Scrollable, draggable, close, minimize/maximize
--- Buttons send ;gear me <ID> into chat
+-- Buttons copy ;gear me <ID> to clipboard
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- Chat remote
-local ChatRemote = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
-
--- Utility function to send command into chat
-local function sendCommand(id)
-    ChatRemote:FireServer(";gear me "..id, "All")
-end
 
 -- GUI setup
 local gui = Instance.new("ScreenGui")
@@ -71,7 +62,7 @@ scroll.ScrollBarThickness = 8
 scroll.BackgroundTransparency = 1
 scroll.Parent = frame
 
--- Utility function to make buttons
+-- Utility function to make buttons that copy to clipboard
 local function makeButton(name, yPos, id)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
@@ -81,7 +72,7 @@ local function makeButton(name, yPos, id)
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Parent = scroll
     btn.MouseButton1Click:Connect(function()
-        sendCommand(id)
+        setclipboard("/e ;gear me "..id) -- copies command to clipboard
     end)
 end
 
