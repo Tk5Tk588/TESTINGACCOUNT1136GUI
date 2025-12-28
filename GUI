@@ -1,6 +1,6 @@
--- TESTINGACCOUNT1136GUI (Copy to clipboard)
+-- TESTINGACCOUNT1136GUI (Copy to clipboard version)
 -- Scrollable, draggable, close, minimize/maximize
--- Buttons copy ;gear me <ID> to clipboard
+-- Buttons copy /e ;gear me <ID> to clipboard
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
