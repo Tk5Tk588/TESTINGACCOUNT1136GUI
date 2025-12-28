@@ -94,7 +94,7 @@ end
 
 -- Gear list (extended)
 local gearList = {
-    {"RC7 Cloud (Fuse Bomb)", ";gear me 11563251"},
+    {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
     {"Gun", ";gear me 95354288"},
     {"Timmy Gun", ";gear me 116693764"},
