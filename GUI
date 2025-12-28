@@ -1,16 +1,9 @@
--- TESTINGACCOUNT1136GUI (HD Admin controlled, merged + fixed)
+-- TESTINGACCOUNT1136GUI (Force to chat with /e)
 -- Scrollable, draggable, close, minimize/maximize
--- All gear buttons send commands to HD Admin
+-- Buttons send /e ;gear me <ID> into chat
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- HD Admin remote
-local RequestCommand = ReplicatedStorage
-    :WaitForChild("HDAdminHDClient")
-    .Signals
-    .RequestCommandSilent
 
 -- GUI setup
 local gui = Instance.new("ScreenGui")
@@ -69,8 +62,8 @@ scroll.ScrollBarThickness = 8
 scroll.BackgroundTransparency = 1
 scroll.Parent = frame
 
--- Utility function to make HD Admin buttons
-local function makeButton(name, yPos, command)
+-- Utility function to make buttons that force chat
+local function makeButton(name, yPos, id)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
     btn.Position = UDim2.new(0, 5, 0, yPos)
@@ -79,53 +72,55 @@ local function makeButton(name, yPos, command)
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Parent = scroll
     btn.MouseButton1Click:Connect(function()
-        RequestCommand:InvokeServer(command)
+        -- Force command into chat
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents
+            .SayMessageRequest:FireServer("/e ;gear me "..id, "All")
     end)
 end
 
--- Gear list (Fuse Bomb fixed + extras)
+-- Gear list
 local gearList = {
-    {"Fuse Bomb", ";gear me 11563251"},
-    {"Ban Hammer", ";gear me 10468797"},
-    {"Gun", ";gear me 95354288"},
-    {"Timmy Gun", ";gear me 116693764"},
-    {"Hyperlaser Gun", ";gear me 130113146"},
-    {"Doge", ";gear me 257810065"},
-    {"Mad Murder Knife", ";gear me 170897263"},
-    {"Rainbow Periastron Omega", ";gear me 159229806"},
-    {"Moneybag", ";gear me 16722267"},
-    {"Phone Throw Away", ";gear me 88146505"},
-    {"Morph Gun", ";gear me 29099749"},
-    {"Lucky Laser Gun", ";gear me 149612167"},
-    {"Knife", ";gear me 121946387"},
-    {"Car", ";gear me 477911027"},
-    {"Sword", ";gear me 147143863"},
-    {"Noir Periastron Psi", ";gear me 120307951"},
-    {"Book", ";gear me 49491736"},
-    {"Game", ";gear me 58574445"},
-    {"8-Bit Pumpkin Launcher", ";gear me 1132887630"},
-    {"Frying Pan", ";gear me 24346755"},
-    {"Balloon", ";gear me 430066424"},
-    {"Snowball", ";gear me 19328185"},
-    {"Watermelon", ";gear me 22787248"},
-    {"Monster Mash Potion", ";gear me 36042821"},
-    {"Treehouse", ";gear me 119917513"},
-    {"Dance Grenade", ";gear me 65545955"},
-    {"Taxi", ";gear me 125013849"},
-    {"Cake", ";gear me 107458461"},
-    {"Laser", ";gear me 115377964"},
-    {"C4", ";gear me 104642566"},
-    {"Bubblegum", ";gear me 11895536"},
-    {"Geolocator", ";gear me 15668963"},
-    {"Raig Table", ";gear me 110789105"},
-    {"Space Sword", ";gear me 566780253"},
-    {"Water Balloon", ";gear me 29100443"},
-    {"Sauce", ";gear me 31314931"},
-    {"Potion Purple", ";gear me 154727251"},
-    {"Paint Can", ";gear me 18474459"},
-    {"Banana Peel", ";gear me 29100449"},
-    {"Powerful Paintbrush", ";gear me 2261478942"},
-    {"Bloxiade", ";gear me 17237662"},
+    {"Fuse Bomb", 11563251},
+    {"Ban Hammer", 10468797},
+    {"Gun", 95354288},
+    {"Timmy Gun", 116693764},
+    {"Hyperlaser Gun", 130113146},
+    {"Doge", 257810065},
+    {"Mad Murder Knife", 170897263},
+    {"Rainbow Periastron Omega", 159229806},
+    {"Moneybag", 16722267},
+    {"Phone Throw Away", 88146505},
+    {"Morph Gun", 29099749},
+    {"Lucky Laser Gun", 149612167},
+    {"Knife", 121946387},
+    {"Car", 477911027},
+    {"Sword", 147143863},
+    {"Noir Periastron Psi", 120307951},
+    {"Book", 49491736},
+    {"Game", 58574445},
+    {"8-Bit Pumpkin Launcher", 1132887630},
+    {"Frying Pan", 24346755},
+    {"Balloon", 430066424},
+    {"Snowball", 19328185},
+    {"Watermelon", 22787248},
+    {"Monster Mash Potion", 36042821},
+    {"Treehouse", 119917513},
+    {"Dance Grenade", 65545955},
+    {"Taxi", 125013849},
+    {"Cake", 107458461},
+    {"Laser", 115377964},
+    {"C4", 104642566},
+    {"Bubblegum", 11895536},
+    {"Geolocator", 15668963},
+    {"Raig Table", 110789105},
+    {"Space Sword", 566780253},
+    {"Water Balloon", 29100443},
+    {"Sauce", 31314931},
+    {"Potion Purple", 154727251},
+    {"Paint Can", 18474459},
+    {"Banana Peel", 29100449},
+    {"Powerful Paintbrush", 2261478942},
+    {"Bloxiade", 17237662},
 }
 
 -- Generate buttons dynamically
