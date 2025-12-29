@@ -1,10 +1,13 @@
 -- TESTINGACCOUNT1136GUI (HD Admin controlled, no /e prefix)
 -- Scrollable, draggable, close, minimize/maximize
--- All gear buttons send ;gear me <ID> to HD Admin
+-- Gear buttons send ;gear me <ID> to HD Admin
+-- Press K to toggle GUI visibility
+-- Includes Bring All button
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
 -- HD Admin remote
 local RequestCommand = ReplicatedStorage
@@ -40,7 +43,7 @@ closeBtn.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
 closeBtn.TextColor3 = Color3.new(1,1,1)
 closeBtn.Parent = titleBar
 closeBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
+    gui.Enabled = false
 end)
 
 local minBtn = Instance.new("TextButton")
@@ -83,7 +86,25 @@ local function makeButton(name, yPos, command)
     end)
 end
 
--- Gear list (plain ;gear me <ID>)
+-- Bring All button
+local function bringAllButton(yPos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 25)
+    btn.Position = UDim2.new(0, 5, 0, yPos)
+    btn.Text = "Bring All"
+    btn.BackgroundColor3 = Color3.fromRGB(120, 60, 60)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Parent = scroll
+    btn.MouseButton1Click:Connect(function()
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= player then
+                RequestCommand:InvokeServer(";bring "..plr.Name)
+            end
+        end
+    end)
+end
+
+-- Gear list
 local gearList = {
     {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
@@ -127,8 +148,8 @@ local gearList = {
     {"Powerful Paintbrush", ";gear me 2261478942"},
     {"Bloxiade", ";gear me 17237662"},
     {"Inglaciator 6000", ";gear me 185422055"},
-    {"Blackhole Ray Gun", ";gear me 78005009"},       -- NEW ENTRY
-    {"Mechatronic Spider", ";gear me 116040789"},     -- NEW ENTRY
+    {"Blackhole Ray Gun", ";gear me 78005009"},
+    {"Mechatronic Spider", ";gear me 116040789"},
 }
 
 -- Generate buttons dynamically
@@ -137,4 +158,14 @@ for _, item in ipairs(gearList) do
     makeButton(item[1], y, item[2])
     y = y + 30
 end
-scroll.CanvasSize = UDim2.new(0,0,0,y)
+
+-- Add Bring All button at the end
+bringAllButton(y)
+scroll.CanvasSize = UDim2.new(0,0,0,y+30)
+
+-- Keybind: Press K to toggle GUI visibility
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
+        gui.Enabled = not gui.Enabled
+    end
+end)
