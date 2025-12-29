@@ -1,10 +1,3 @@
--- TESTINGACCOUNT1136GUI (HD Admin controlled, no /e prefix)
--- Scrollable, draggable, close, minimize/maximize
--- Gear buttons send ;gear me <ID> to HD Admin
--- Press K to toggle GUI visibility
--- Includes Bring All button
--- GUI persists across respawns
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -15,8 +8,6 @@ local RequestCommand = ReplicatedStorage
     :WaitForChild("HDAdminHDClient")
     .Signals
     .RequestCommandSilent
-
--- GUI setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
 gui.ResetOnSpawn = false -- ✅ prevents removal on respawn
@@ -29,7 +20,6 @@ frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
-
 local titleBar = Instance.new("TextLabel")
 titleBar.Size = UDim2.new(1, 0, 0, 25)
 titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
@@ -65,7 +55,6 @@ minBtn.MouseButton1Click:Connect(function()
         frame.Size = UDim2.new(0, 250, 0, 400)
     end
 end)
-
 local scroll = Instance.new("ScrollingFrame")
 scroll.Size = UDim2.new(1, -10, 1, -35)
 scroll.Position = UDim2.new(0, 5, 0, 30)
@@ -73,8 +62,7 @@ scroll.CanvasSize = UDim2.new(0,0,0,0)
 scroll.ScrollBarThickness = 8
 scroll.BackgroundTransparency = 1
 scroll.Parent = frame
-
--- Utility function to make HD Admin buttons
+-- Gear button
 local function makeButton(name, yPos, command)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
@@ -88,7 +76,7 @@ local function makeButton(name, yPos, command)
     end)
 end
 
--- Bring All button
+-- Bring All
 local function bringAllButton(yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
@@ -106,7 +94,34 @@ local function bringAllButton(yPos)
     end)
 end
 
--- Gear list
+-- Custom commands
+local function makeCommandButton(name, yPos, command)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 25)
+    btn.Position = UDim2.new(0, 5, 0, yPos)
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(100, 100, 150)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Parent = scroll
+    btn.MouseButton1Click:Connect(function()
+        RequestCommand:InvokeServer(command)
+    end)
+end
+
+local function makeCommandForAllButton(name, yPos, baseCommand)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 25)
+    btn.Position = UDim2.new(0, 5, 0, yPos)
+    btn.Text = name.." (All)"
+    btn.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Parent = scroll
+    btn.MouseButton1Click:Connect(function()
+        for _, plr in ipairs(Players:GetPlayers()) do
+            RequestCommand:InvokeServer(baseCommand.." "..plr.Name)
+        end
+    end)
+end
 local gearList = {
     {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
@@ -153,18 +168,40 @@ local gearList = {
     {"Blackhole Ray Gun", ";gear me 78005009"},
     {"Mechatronic Spider", ";gear me 116040789"},
 }
-
--- Generate buttons dynamically
 local y = 0
+-- Gear buttons
 for _, item in ipairs(gearList) do
     makeButton(item[1], y, item[2])
     y = y + 30
 end
 
--- Add Bring All button at the end
+-- Add Bring All button
 bringAllButton(y)
-scroll.CanvasSize = UDim2.new(0,0,0,y+30)
+y = y + 30
 
+-- Extra command buttons
+makeCommandButton("BigHead (You)", y, ";bighead me")
+y = y + 30
+makeCommandForAllButton("BigHead", y, ";bighead")
+y = y + 30
+
+makeCommandButton("SmallHead (You)", y, ";smallhead me")
+y = y + 30
+makeCommandForAllButton("SmallHead", y, ";smallhead")
+y = y + 30
+
+makeCommandButton("Sit (You)", y, ";sit me")
+y = y + 30
+makeCommandForAllButton("Sit", y, ";sit")
+y = y + 30
+
+makeCommandButton("Char Tanbi12344 (You)", y, ";char me 7122082554")
+y = y + 30
+makeCommandForAllButton("Char Tanbi12344", y, ";char 7122082554")
+y = y + 30
+
+-- Update scroll size
+scroll.CanvasSize = UDim2.new(0,0,0,y)
 -- Keybind: Press K to toggle GUI visibility
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
