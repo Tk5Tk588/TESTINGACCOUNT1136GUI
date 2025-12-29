@@ -89,6 +89,7 @@ local function bringAllButton(yPos)
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr ~= player then
                 RequestCommand:InvokeServer(";bring "..plr.Name)
+                task.wait(0.5) -- ✅ cooldown
             end
         end
     end)
@@ -119,6 +120,7 @@ local function makeCommandForAllButton(name, yPos, baseCommand)
     btn.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(baseCommand.." "..plr.Name)
+            task.wait(0.5) -- ✅ cooldown
         end
     end)
 end
@@ -198,6 +200,18 @@ y = y + 30
 makeCommandButton("Char Tanbi12344 (You)", y, ";char me 7122082554")
 y = y + 30
 makeCommandForAllButton("Char Tanbi12344", y, ";char 7122082554")
+y = y + 30
+
+-- Clipboard Title
+makeCommandButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
+y = y + 30
+makeCommandForAllButton("Clipboard Title", y, ";titler THE SERVER-SIDED")
+y = y + 30
+
+-- Ice
+makeCommandButton("Ice (You)", y, ";ice me")
+y = y + 30
+makeCommandForAllButton("Ice", y, ";ice")
 y = y + 30
 
 -- Update scroll size
