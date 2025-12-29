@@ -89,7 +89,7 @@ local function bringAllButton(yPos)
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr ~= player then
                 RequestCommand:InvokeServer(";bring "..plr.Name)
-                task.wait(0.5) -- ✅ cooldown
+                task.wait(0.75) -- ✅ cooldown
             end
         end
     end)
@@ -120,7 +120,7 @@ local function makeCommandForAllButton(name, yPos, baseCommand)
     btn.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(baseCommand.." "..plr.Name)
-            task.wait(0.5) -- ✅ cooldown
+            task.wait(0.75) -- ✅ cooldown
         end
     end)
 end
