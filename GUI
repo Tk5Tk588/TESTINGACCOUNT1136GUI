@@ -172,9 +172,30 @@ local gearList = {
     {"ALS Ice Bucket Challenge", ";gear me 173751087"}, -- ✅ NEW
 }
 local y = 0
--- Gear buttons
+-- Gear buttons (You + All)
 for _, item in ipairs(gearList) do
-    makeButton(item[1], y, item[2])
+    local gearName = item[1]
+    local gearCommand = item[2]
+    local gearId = string.match(gearCommand, "%d+") -- extract ID number
+
+    -- Gear for You
+    makeButton(gearName.." (You)", y, ";gear me "..gearId)
+    y = y + 30
+
+    -- Gear for All
+    local btnAll = Instance.new("TextButton")
+    btnAll.Size = UDim2.new(1, -10, 0, 25)
+    btnAll.Position = UDim2.new(0, 5, 0, y)
+    btnAll.Text = gearName.." (All)"
+    btnAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+    btnAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btnAll.Parent = scroll
+    btnAll.MouseButton1Click:Connect(function()
+        for _, plr in ipairs(Players:GetPlayers()) do
+            RequestCommand:InvokeServer(";gear "..plr.Name.." "..gearId)
+            task.wait(0.65) -- ✅ cooldown
+        end
+    end)
     y = y + 30
 end
 
@@ -182,7 +203,7 @@ end
 bringAllButton(y)
 y = y + 30
 
--- Extra command buttons
+-- Extra command buttons (BigHead, SmallHead, Sit, Char, Clipboard Title, Ice)
 makeCommandButton("BigHead (You)", y, ";bighead me")
 y = y + 30
 makeCommandForAllButton("BigHead", y, ";bighead")
@@ -203,13 +224,11 @@ y = y + 30
 makeCommandForAllButton("Char Tanbi12344", y, ";char 7122082554")
 y = y + 30
 
--- Clipboard Title
 makeCommandButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
 y = y + 30
 makeCommandForAllButton("Clipboard Title", y, ";titler THE SERVER-SIDED")
 y = y + 30
 
--- Ice
 makeCommandButton("Ice (You)", y, ";ice me")
 y = y + 30
 makeCommandForAllButton("Ice", y, ";ice")
