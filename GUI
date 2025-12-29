@@ -169,6 +169,7 @@ local gearList = {
     {"Inglaciator 6000", ";gear me 185422055"},
     {"Blackhole Ray Gun", ";gear me 78005009"},
     {"Mechatronic Spider", ";gear me 116040789"},
+    {"ALS Ice Bucket Challenge", ";gear me 173751087"}, -- ✅ NEW
 }
 local y = 0
 -- Gear buttons
