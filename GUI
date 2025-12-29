@@ -18,6 +18,7 @@ local RequestCommand = ReplicatedStorage
 -- GUI setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
+gui.ResetOnSpawn = false -- ✅ prevents removal on respawn
 gui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
