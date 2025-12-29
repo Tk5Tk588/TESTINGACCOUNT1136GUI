@@ -3,6 +3,7 @@
 -- Gear buttons send ;gear me <ID> to HD Admin
 -- Press K to toggle GUI visibility
 -- Includes Bring All button
+-- GUI persists across respawns
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
