@@ -89,7 +89,7 @@ local function bringAllButton(yPos)
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr ~= player then
                 RequestCommand:InvokeServer(";bring "..plr.Name)
-                task.wait(0.65) -- ✅ cooldown
+                task.wait() -- ✅ cooldown
             end
         end
     end)
@@ -207,6 +207,11 @@ y = y + 30
 makeCommandButton("BigHead (You)", y, ";bighead me")
 y = y + 30
 makeCommandForAllButton("BigHead", y, ";bighead")
+y = y + 30
+
+makeCommandButton("UnIce (You)", y, ";unice me")
+y = y + 30
+makeCommandForAllButton("UnIce", y, ";unice")
 y = y + 30
 
 makeCommandButton("SmallHead (You)", y, ";smallhead me")
