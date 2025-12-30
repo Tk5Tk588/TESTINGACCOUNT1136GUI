@@ -120,7 +120,7 @@ local function makeCommandForAllButton(name, yPos, baseCommand)
     btn.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(baseCommand.." "..plr.Name)
-            task.wait(0.65) -- ✅ cooldown
+            task.wait() -- ✅ cooldown
         end
     end)
 end
@@ -193,7 +193,7 @@ for _, item in ipairs(gearList) do
     btnAll.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(";gear "..plr.Name.." "..gearId)
-            task.wait(0.65) -- ✅ cooldown
+            task.wait() -- ✅ cooldown
         end
     end)
     y = y + 30
