@@ -10,7 +10,7 @@ local RequestCommand = ReplicatedStorage
     .RequestCommandSilent
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
-gui.ResetOnSpawn = false -- ✅ prevents removal on respawn
+gui.ResetOnSpawn = false -- ✅ persists across respawns
 gui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
@@ -89,7 +89,7 @@ local function bringAllButton(yPos)
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr ~= player then
                 RequestCommand:InvokeServer(";bring "..plr.Name)
-                task.wait() -- ✅ cooldown
+                -- cooldown 0s
             end
         end
     end)
@@ -120,7 +120,7 @@ local function makeCommandForAllButton(name, yPos, baseCommand)
     btn.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(baseCommand.." "..plr.Name)
-            task.wait() -- ✅ cooldown
+            -- cooldown 0s
         end
     end)
 end
@@ -169,7 +169,7 @@ local gearList = {
     {"Inglaciator 6000", ";gear me 185422055"},
     {"Blackhole Ray Gun", ";gear me 78005009"},
     {"Mechatronic Spider", ";gear me 116040789"},
-    {"ALS Ice Bucket Challenge", ";gear me 173751087"}, -- ✅ NEW
+    {"ALS Ice Bucket Challenge", ";gear me 173751087"},
 }
 local y = 0
 -- Gear buttons (You + All)
@@ -193,7 +193,7 @@ for _, item in ipairs(gearList) do
     btnAll.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(";gear "..plr.Name.." "..gearId)
-            task.wait() -- ✅ cooldown
+            -- cooldown 0s
         end
     end)
     y = y + 30
@@ -203,15 +203,10 @@ end
 bringAllButton(y)
 y = y + 30
 
--- Extra command buttons (BigHead, SmallHead, Sit, Char, Clipboard Title, Ice)
+-- Extra command buttons
 makeCommandButton("BigHead (You)", y, ";bighead me")
 y = y + 30
 makeCommandForAllButton("BigHead", y, ";bighead")
-y = y + 30
-
-makeCommandButton("UnIce (You)", y, ";unice me")
-y = y + 30
-makeCommandForAllButton("UnIce", y, ";unice")
 y = y + 30
 
 makeCommandButton("SmallHead (You)", y, ";smallhead me")
@@ -229,14 +224,45 @@ y = y + 30
 makeCommandForAllButton("Char Tanbi12344", y, ";char 7122082554")
 y = y + 30
 
+-- Clipboard Title (correct format)
 makeCommandButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
 y = y + 30
-makeCommandForAllButton("Clipboard Title", y, ";titler THE SERVER-SIDED")
+local btnTitleAll = Instance.new("TextButton")
+btnTitleAll.Size = UDim2.new(1, -10, 0, 25)
+btnTitleAll.Position = UDim2.new(0, 5, 0, y)
+btnTitleAll.Text = "Clipboard Title (All)"
+btnTitleAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+btnTitleAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnTitleAll.Parent = scroll
+btnTitleAll.MouseButton1Click:Connect(function()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        RequestCommand:InvokeServer(";titler "..plr.Name.." THE SERVER-SIDED")
+        -- cooldown 0s
+    end
+end)
 y = y + 30
 
+-- Ice / Unice
 makeCommandButton("Ice (You)", y, ";ice me")
 y = y + 30
 makeCommandForAllButton("Ice", y, ";ice")
+y = y + 30
+
+makeCommandButton("Unice (You)", y, ";unice me")
+y = y + 30
+makeCommandForAllButton("Unice", y, ";unice")
+y = y + 30
+
+-- Heal
+makeCommandButton("Heal (You)", y, ";heal me")
+y = y + 30
+makeCommandForAllButton("Heal", y, ";heal")
+y = y + 30
+
+-- Kill
+makeCommandButton("Kill (You)", y, ";kill me")
+y = y + 30
+makeCommandForAllButton("Kill", y, ";kill")
 y = y + 30
 
 -- Update scroll size
