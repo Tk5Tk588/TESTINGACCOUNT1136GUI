@@ -3,14 +3,17 @@ local player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
--- HD Admin remote
+-- HD Admin Remote
 local RequestCommand = ReplicatedStorage
     :WaitForChild("HDAdminHDClient")
     .Signals
     .RequestCommandSilent
+
+-- F3X Remote
+local F3XRemote = ReplicatedStorage:WaitForChild("SyncAPI"):WaitForChild("ServerEndpoint")
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
-gui.ResetOnSpawn = false -- ✅ persists across respawns
+gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
@@ -49,20 +52,42 @@ minBtn.Parent = titleBar
 local minimized = false
 minBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
-    if minimized then
-        frame.Size = UDim2.new(0, 250, 0, 25)
-    else
-        frame.Size = UDim2.new(0, 250, 0, 400)
-    end
+    frame.Size = minimized and UDim2.new(0, 250, 0, 25) or UDim2.new(0, 250, 0, 400)
 end)
 local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1, -10, 1, -35)
-scroll.Position = UDim2.new(0, 5, 0, 30)
+scroll.Size = UDim2.new(1, -10, 1, -65)
+scroll.Position = UDim2.new(0, 5, 0, 60)
 scroll.CanvasSize = UDim2.new(0,0,0,0)
 scroll.ScrollBarThickness = 8
 scroll.BackgroundTransparency = 1
 scroll.Parent = frame
--- Gear button
+
+-- Search Bar
+local searchBox = Instance.new("TextBox")
+searchBox.Size = UDim2.new(1, -10, 0, 25)
+searchBox.Position = UDim2.new(0, 5, 0, 30)
+searchBox.PlaceholderText = "Search..."
+searchBox.Text = ""
+searchBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+searchBox.Parent = frame
+
+-- Cooldown Input
+local cooldownBox = Instance.new("TextBox")
+cooldownBox.Size = UDim2.new(1, -10, 0, 25)
+cooldownBox.Position = UDim2.new(0, 5, 0, 0)
+cooldownBox.PlaceholderText = "Cooldown (seconds)"
+cooldownBox.Text = "0"
+cooldownBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+cooldownBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+cooldownBox.Parent = scroll
+local allButtons = {}
+
+local function getCooldown()
+    local val = tonumber(cooldownBox.Text)
+    return val or 0
+end
+
 local function makeButton(name, yPos, command)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
@@ -72,11 +97,16 @@ local function makeButton(name, yPos, command)
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Parent = scroll
     btn.MouseButton1Click:Connect(function()
-        RequestCommand:InvokeServer(command)
+        if typeof(command) == "string" then
+            RequestCommand:InvokeServer(command)
+        elseif typeof(command) == "function" then
+            command()
+        end
     end)
+    table.insert(allButtons, btn)
+    return btn
 end
 
--- Bring All
 local function bringAllButton(yPos)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
@@ -89,24 +119,11 @@ local function bringAllButton(yPos)
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr ~= player then
                 RequestCommand:InvokeServer(";bring "..plr.Name)
-                -- cooldown 0s
+                task.wait(getCooldown())
             end
         end
     end)
-end
-
--- Custom commands
-local function makeCommandButton(name, yPos, command)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 25)
-    btn.Position = UDim2.new(0, 5, 0, yPos)
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(100, 100, 150)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Parent = scroll
-    btn.MouseButton1Click:Connect(function()
-        RequestCommand:InvokeServer(command)
-    end)
+    table.insert(allButtons, btn)
 end
 
 local function makeCommandForAllButton(name, yPos, baseCommand)
@@ -120,10 +137,27 @@ local function makeCommandForAllButton(name, yPos, baseCommand)
     btn.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(baseCommand.." "..plr.Name)
-            -- cooldown 0s
+            task.wait(getCooldown())
         end
     end)
+    table.insert(allButtons, btn)
 end
+
+-- Search filter
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local query = string.lower(searchBox.Text)
+    local y = 30
+    for _, btn in ipairs(allButtons) do
+        if query == "" or string.find(string.lower(btn.Text), query) then
+            btn.Visible = true
+            btn.Position = UDim2.new(0, 5, 0, y)
+            y = y + 30
+        else
+            btn.Visible = false
+        end
+    end
+    scroll.CanvasSize = UDim2.new(0,0,0,y)
+end)
 local gearList = {
     {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
@@ -171,7 +205,8 @@ local gearList = {
     {"Mechatronic Spider", ";gear me 116040789"},
     {"ALS Ice Bucket Challenge", ";gear me 173751087"},
 }
-local y = 0
+local y = 30 -- start below inputs
+
 -- Gear buttons (You + All)
 for _, item in ipairs(gearList) do
     local gearName = item[1]
@@ -191,8 +226,10 @@ for _, item in ipairs(gearList) do
     btnAll.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(";gear "..plr.Name.." "..gearId)
+            task.wait(getCooldown())
         end
     end)
+    table.insert(allButtons, btnAll)
     y = y + 30
 end
 
@@ -218,14 +255,8 @@ y = y + 30
 makeCommandForAllButton("Sit", y, ";sit")
 y = y + 30
 
--- Refresh
-makeCommandButton("Refresh (You)", y, ";re me")
-y = y + 30
-makeCommandForAllButton("Refresh", y, ";re")
-y = y + 30
-
 -- Char (correct syntax)
-makeCommandButton("Char Tanbi12344 (You)", y, ";char me tanbi12344")
+makeCommandButton("Char Tanbi12344 (You)", y, ";char me Tanbi12344")
 y = y + 30
 local btnCharAll = Instance.new("TextButton")
 btnCharAll.Size = UDim2.new(1, -10, 0, 25)
@@ -236,9 +267,11 @@ btnCharAll.TextColor3 = Color3.fromRGB(255, 255, 255)
 btnCharAll.Parent = scroll
 btnCharAll.MouseButton1Click:Connect(function()
     for _, plr in ipairs(Players:GetPlayers()) do
-        RequestCommand:InvokeServer(";char "..plr.Name.." tanbi12344")
+        RequestCommand:InvokeServer(";char "..plr.Name.." Tanbi12344")
+        task.wait(getCooldown())
     end
 end)
+table.insert(allButtons, btnCharAll)
 y = y + 30
 
 -- Clipboard Title
@@ -254,8 +287,10 @@ btnTitleAll.Parent = scroll
 btnTitleAll.MouseButton1Click:Connect(function()
     for _, plr in ipairs(Players:GetPlayers()) do
         RequestCommand:InvokeServer(";titler "..plr.Name.." THE SERVER-SIDED")
+        task.wait(getCooldown())
     end
 end)
+table.insert(allButtons, btnTitleAll)
 y = y + 30
 
 -- Ice / Unice
@@ -280,10 +315,46 @@ y = y + 30
 makeCommandForAllButton("Kill", y, ";kill")
 y = y + 30
 
--- Final scroll size
-scroll.CanvasSize = UDim2.new(0,0,0,y)
+-- Respawn
+makeCommandButton("Respawn (You)", y, ";re me")
+y = y + 30
+makeCommandForAllButton("Respawn", y, ";re")
+y = y + 30
 
--- Keybind: Press K to toggle GUI visibility
+-- Example F3X Sync Buttons
+makeButton("Spawn Part (F3X)", y, function()
+    F3XRemote:InvokeServer("NewPart", {
+        className = "Part",
+        properties = {
+            Size = Vector3.new(4, 1, 4),
+            Anchored = true,
+            Position = workspace.CurrentCamera.CFrame.Position + Vector3.new(0, 5, 0),
+            Color = Color3.fromRGB(255, 0, 0)
+        }
+    })
+end)
+y = y + 30
+
+makeButton("Anchor All (F3X)", y, function()
+    local parts = {}
+    for _, p in ipairs(workspace:GetChildren()) do
+        if p:IsA("Part") then
+            table.insert(parts, p)
+        end
+    end
+    F3XRemote:InvokeServer("Anchor", {parts = parts, anchored = true})
+end)
+y = y + 30
+
+makeButton("Paint Part (F3X)", y, function()
+    if workspace:FindFirstChild("Part1") then
+        F3XRemote:InvokeServer("Paint", {parts = {workspace.Part1}, color = Color3.fromRGB(0, 255, 0)})
+    end
+end)
+y = y + 30
+
+-- Update scroll size
+scroll.CanvasSize = UDim2.new(0,0,0,y)
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
         gui.Enabled = not gui.Enabled
