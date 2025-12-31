@@ -9,8 +9,15 @@ local RequestCommand = ReplicatedStorage
     .Signals
     .RequestCommandSilent
 
--- F3X Remote
-local F3XRemote = ReplicatedStorage:WaitForChild("SyncAPI"):WaitForChild("ServerEndpoint")
+-- F3X Remote (safe check)
+local F3XRemote
+local sync = ReplicatedStorage:FindFirstChild("SyncAPI")
+if sync and sync:FindFirstChild("ServerEndpoint") then
+    F3XRemote = sync.ServerEndpoint
+else
+    warn("⚠️ F3X not found — GUI will only run HD Admin commands.")
+end
+
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
 gui.ResetOnSpawn = false
