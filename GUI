@@ -218,6 +218,12 @@ y = y + 30
 makeCommandForAllButton("Sit", y, ";sit")
 y = y + 30
 
+-- Refresh
+makeCommandButton("Refresh (You)", y, ";re me")
+y = y + 30
+makeCommandForAllButton("Refresh", y, ";re")
+y = y + 30
+
 -- Char (correct syntax)
 makeCommandButton("Char Tanbi12344 (You)", y, ";char me tanbi12344")
 y = y + 30
