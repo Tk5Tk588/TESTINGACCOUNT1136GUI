@@ -176,13 +176,11 @@ local y = 0
 for _, item in ipairs(gearList) do
     local gearName = item[1]
     local gearCommand = item[2]
-    local gearId = string.match(gearCommand, "%d+") -- extract ID number
+    local gearId = string.match(gearCommand, "%d+")
 
-    -- Gear for You
     makeButton(gearName.." (You)", y, ";gear me "..gearId)
     y = y + 30
 
-    -- Gear for All
     local btnAll = Instance.new("TextButton")
     btnAll.Size = UDim2.new(1, -10, 0, 25)
     btnAll.Position = UDim2.new(0, 5, 0, y)
@@ -193,38 +191,51 @@ for _, item in ipairs(gearList) do
     btnAll.MouseButton1Click:Connect(function()
         for _, plr in ipairs(Players:GetPlayers()) do
             RequestCommand:InvokeServer(";gear "..plr.Name.." "..gearId)
-            -- cooldown 0s
         end
     end)
     y = y + 30
 end
 
--- Add Bring All button
+-- Bring All
 bringAllButton(y)
 y = y + 30
 
--- Extra command buttons
+-- BigHead
 makeCommandButton("BigHead (You)", y, ";bighead me")
 y = y + 30
 makeCommandForAllButton("BigHead", y, ";bighead")
 y = y + 30
 
+-- SmallHead
 makeCommandButton("SmallHead (You)", y, ";smallhead me")
 y = y + 30
 makeCommandForAllButton("SmallHead", y, ";smallhead")
 y = y + 30
 
+-- Sit
 makeCommandButton("Sit (You)", y, ";sit me")
 y = y + 30
 makeCommandForAllButton("Sit", y, ";sit")
 y = y + 30
 
-makeCommandButton("Char Tanbi12344 (You)", y, ";char me 7122082554")
+-- Char (correct syntax)
+makeCommandButton("Char Tanbi12344 (You)", y, ";char me Tanbi12344")
 y = y + 30
-makeCommandForAllButton("Char Tanbi12344", y, ";char 7122082554")
+local btnCharAll = Instance.new("TextButton")
+btnCharAll.Size = UDim2.new(1, -10, 0, 25)
+btnCharAll.Position = UDim2.new(0, 5, 0, y)
+btnCharAll.Text = "Char Tanbi12344 (All)"
+btnCharAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+btnCharAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnCharAll.Parent = scroll
+btnCharAll.MouseButton1Click:Connect(function()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        RequestCommand:InvokeServer(";char "..plr.Name.." Tanbi12344")
+    end
+end)
 y = y + 30
 
--- Clipboard Title (correct format)
+-- Clipboard Title
 makeCommandButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
 y = y + 30
 local btnTitleAll = Instance.new("TextButton")
@@ -237,7 +248,6 @@ btnTitleAll.Parent = scroll
 btnTitleAll.MouseButton1Click:Connect(function()
     for _, plr in ipairs(Players:GetPlayers()) do
         RequestCommand:InvokeServer(";titler "..plr.Name.." THE SERVER-SIDED")
-        -- cooldown 0s
     end
 end)
 y = y + 30
@@ -253,20 +263,20 @@ y = y + 30
 makeCommandForAllButton("Unice", y, ";unice")
 y = y + 30
 
--- Heal
+-- Heal / Kill
 makeCommandButton("Heal (You)", y, ";heal me")
 y = y + 30
 makeCommandForAllButton("Heal", y, ";heal")
 y = y + 30
 
--- Kill
 makeCommandButton("Kill (You)", y, ";kill me")
 y = y + 30
 makeCommandForAllButton("Kill", y, ";kill")
 y = y + 30
 
--- Update scroll size
+-- Final scroll size
 scroll.CanvasSize = UDim2.new(0,0,0,y)
+
 -- Keybind: Press K to toggle GUI visibility
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
