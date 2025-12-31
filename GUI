@@ -256,7 +256,7 @@ makeCommandForAllButton("Sit", y, ";sit")
 y = y + 30
 
 -- Char (correct syntax)
-makeCommandButton("Char Tanbi12344 (You)", y, ";char me Tanbi12344")
+makeCommandButton("Char Tanbi12344 (You)", y, ";char me tanbi12344")
 y = y + 30
 local btnCharAll = Instance.new("TextButton")
 btnCharAll.Size = UDim2.new(1, -10, 0, 25)
@@ -267,7 +267,7 @@ btnCharAll.TextColor3 = Color3.fromRGB(255, 255, 255)
 btnCharAll.Parent = scroll
 btnCharAll.MouseButton1Click:Connect(function()
     for _, plr in ipairs(Players:GetPlayers()) do
-        RequestCommand:InvokeServer(";char "..plr.Name.." Tanbi12344")
+        RequestCommand:InvokeServer(";char "..plr.Name.." tanbi12344")
         task.wait(getCooldown())
     end
 end)
