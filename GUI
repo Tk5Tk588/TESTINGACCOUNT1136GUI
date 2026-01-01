@@ -290,6 +290,12 @@ y = y + 30
 makeCommandForAllButton("Respawn", y, ";re")
 y = y + 30
 
+-- Kaboom? Yes nico.Kaboom. EXPLODE 1 GOOGOLPLEX TIMES
+makeButton("Explode (You)", y, ";explode me")
+y = y + 30
+makeCommandForAllButton("KABOOM", y, ";explode")
+y = y + 30
+
 -- Update scroll size so scrolling works
 scroll.CanvasSize = UDim2.new(0, 0, 0, y)
 
