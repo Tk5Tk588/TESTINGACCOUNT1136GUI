@@ -8,16 +8,6 @@ local RequestCommand = ReplicatedStorage
     :WaitForChild("HDAdminHDClient")
     .Signals
     .RequestCommandSilent
-
--- F3X Remote (safe check)
-local F3XRemote
-local sync = ReplicatedStorage:FindFirstChild("SyncAPI")
-if sync and sync:FindFirstChild("ServerEndpoint") then
-    F3XRemote = sync.ServerEndpoint
-else
-    warn("⚠️ F3X not found — GUI will only run HD Admin commands.")
-end
-
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
 gui.ResetOnSpawn = false
@@ -104,11 +94,7 @@ local function makeButton(name, yPos, command)
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Parent = scroll
     btn.MouseButton1Click:Connect(function()
-        if typeof(command) == "string" then
-            RequestCommand:InvokeServer(command)
-        elseif typeof(command) == "function" then
-            command()
-        end
+        RequestCommand:InvokeServer(command)
     end)
     table.insert(allButtons, btn)
     return btn
@@ -165,6 +151,7 @@ searchBox:GetPropertyChangedSignal("Text"):Connect(function()
     end
     scroll.CanvasSize = UDim2.new(0,0,0,y)
 end)
+
 local gearList = {
     {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
@@ -212,156 +199,73 @@ local gearList = {
     {"Mechatronic Spider", ";gear me 116040789"},
     {"ALS Ice Bucket Challenge", ";gear me 173751087"},
 }
-local y = 30 -- start below inputs
-
--- Gear buttons (You + All)
-for _, item in ipairs(gearList) do
-    local gearName = item[1]
-    local gearCommand = item[2]
-    local gearId = string.match(gearCommand, "%d+")
-
-    makeButton(gearName.." (You)", y, ";gear me "..gearId)
-    y = y + 30
-
-    local btnAll = Instance.new("TextButton")
-    btnAll.Size = UDim2.new(1, -10, 0, 25)
-    btnAll.Position = UDim2.new(0, 5, 0, y)
-    btnAll.Text = gearName.." (All)"
-    btnAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
-    btnAll.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btnAll.Parent = scroll
-    btnAll.MouseButton1Click:Connect(function()
-        for _, plr in ipairs(Players:GetPlayers()) do
-            RequestCommand:InvokeServer(";gear "..plr.Name.." "..gearId)
-            task.wait(getCooldown())
-        end
-    end)
-    table.insert(allButtons, btnAll)
-    y = y + 30
-end
+local y = 30
 
 -- Bring All
 bringAllButton(y)
 y = y + 30
 
 -- BigHead
-makeCommandButton("BigHead (You)", y, ";bighead me")
+makeButton("BigHead (You)", y, ";bighead me")
 y = y + 30
 makeCommandForAllButton("BigHead", y, ";bighead")
 y = y + 30
 
 -- SmallHead
-makeCommandButton("SmallHead (You)", y, ";smallhead me")
+makeButton("SmallHead (You)", y, ";smallhead me")
 y = y + 30
 makeCommandForAllButton("SmallHead", y, ";smallhead")
 y = y + 30
 
 -- Sit
-makeCommandButton("Sit (You)", y, ";sit me")
+makeButton("Sit (You)", y, ";sit me")
 y = y + 30
 makeCommandForAllButton("Sit", y, ";sit")
 y = y + 30
 
--- Char (correct syntax)
-makeCommandButton("Char Tanbi12344 (You)", y, ";char me tanbi12344")
+-- Char tanbi12344
+makeButton("Char tanbi12344 (You)", y, ";char me tanbi12344")
 y = y + 30
-local btnCharAll = Instance.new("TextButton")
-btnCharAll.Size = UDim2.new(1, -10, 0, 25)
-btnCharAll.Position = UDim2.new(0, 5, 0, y)
-btnCharAll.Text = "Char Tanbi12344 (All)"
-btnCharAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
-btnCharAll.TextColor3 = Color3.fromRGB(255, 255, 255)
-btnCharAll.Parent = scroll
-btnCharAll.MouseButton1Click:Connect(function()
-    for _, plr in ipairs(Players:GetPlayers()) do
-        RequestCommand:InvokeServer(";char "..plr.Name.." tanbi12344")
-        task.wait(getCooldown())
-    end
-end)
-table.insert(allButtons, btnCharAll)
+makeCommandForAllButton("Char tanbi12344", y, ";char tanbi12344")
 y = y + 30
 
 -- Clipboard Title
-makeCommandButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
+makeButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
 y = y + 30
-local btnTitleAll = Instance.new("TextButton")
-btnTitleAll.Size = UDim2.new(1, -10, 0, 25)
-btnTitleAll.Position = UDim2.new(0, 5, 0, y)
-btnTitleAll.Text = "Clipboard Title (All)"
-btnTitleAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
-btnTitleAll.TextColor3 = Color3.fromRGB(255, 255, 255)
-btnTitleAll.Parent = scroll
-btnTitleAll.MouseButton1Click:Connect(function()
-    for _, plr in ipairs(Players:GetPlayers()) do
-        RequestCommand:InvokeServer(";titler "..plr.Name.." THE SERVER-SIDED")
-        task.wait(getCooldown())
-    end
-end)
-table.insert(allButtons, btnTitleAll)
+makeCommandForAllButton("Clipboard Title", y, ";titler THE SERVER-SIDED")
 y = y + 30
 
 -- Ice / Unice
-makeCommandButton("Ice (You)", y, ";ice me")
+makeButton("Ice (You)", y, ";ice me")
 y = y + 30
 makeCommandForAllButton("Ice", y, ";ice")
 y = y + 30
 
-makeCommandButton("Unice (You)", y, ";unice me")
+makeButton("Unice (You)", y, ";unice me")
 y = y + 30
 makeCommandForAllButton("Unice", y, ";unice")
 y = y + 30
 
 -- Heal / Kill
-makeCommandButton("Heal (You)", y, ";heal me")
+makeButton("Heal (You)", y, ";heal me")
 y = y + 30
 makeCommandForAllButton("Heal", y, ";heal")
 y = y + 30
 
-makeCommandButton("Kill (You)", y, ";kill me")
+makeButton("Kill (You)", y, ";kill me")
 y = y + 30
 makeCommandForAllButton("Kill", y, ";kill")
 y = y + 30
 
 -- Respawn
-makeCommandButton("Respawn (You)", y, ";re me")
+makeButton("Respawn (You)", y, ";re me")
 y = y + 30
 makeCommandForAllButton("Respawn", y, ";re")
 y = y + 30
 
--- Example F3X Sync Buttons
-makeButton("Spawn Part (F3X)", y, function()
-    F3XRemote:InvokeServer("NewPart", {
-        className = "Part",
-        properties = {
-            Size = Vector3.new(4, 1, 4),
-            Anchored = true,
-            Position = workspace.CurrentCamera.CFrame.Position + Vector3.new(0, 5, 0),
-            Color = Color3.fromRGB(255, 0, 0)
-        }
-    })
-end)
-y = y + 30
-
-makeButton("Anchor All (F3X)", y, function()
-    local parts = {}
-    for _, p in ipairs(workspace:GetChildren()) do
-        if p:IsA("Part") then
-            table.insert(parts, p)
-        end
-    end
-    F3XRemote:InvokeServer("Anchor", {parts = parts, anchored = true})
-end)
-y = y + 30
-
-makeButton("Paint Part (F3X)", y, function()
-    if workspace:FindFirstChild("Part1") then
-        F3XRemote:InvokeServer("Paint", {parts = {workspace.Part1}, color = Color3.fromRGB(0, 255, 0)})
-    end
-end)
-y = y + 30
-
--- Update scroll size
-scroll.CanvasSize = UDim2.new(0,0,0,y)
+-- Update scroll size so scrolling works
+scroll.CanvasSize = UDim2.new(0, 0, 0, y)
+-- Section 8: Keybind
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
         gui.Enabled = not gui.Enabled
