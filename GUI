@@ -198,7 +198,9 @@ local gearList = {
     {"Blackhole Ray Gun", ";gear me 78005009"},
     {"Mechatronic Spider", ";gear me 116040789"},
     {"ALS Ice Bucket Challenge", ";gear me 173751087"},
+    {"Hot Potato", ";gear me 25741198"}, -- ✅ new gear
 }
+
 
 local y = 30
 
