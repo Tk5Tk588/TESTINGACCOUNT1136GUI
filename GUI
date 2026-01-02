@@ -293,10 +293,36 @@ makeCommandForAllButton("Respawn", y, ";re")
 y = y + 30
 
 -- Kaboom? Yes nico.Kaboom. EXPLODE 1 GOOGOLPLEX TIMES
+-- Explode (You)
 makeButton("Explode (You)", y, ";explode me")
 y = y + 30
-makeCommandForAllButton("KABOOM", y, ";explode")
+
+-- Explode All with chat sequence
+local btnExplodeAll = Instance.new("TextButton")
+btnExplodeAll.Size = UDim2.new(1, -10, 0, 25)
+btnExplodeAll.Position = UDim2.new(0, 5, 0, y)
+btnExplodeAll.Text = "Explode (All)"
+btnExplodeAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+btnExplodeAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnExplodeAll.Parent = scroll
+btnExplodeAll.MouseButton1Click:Connect(function()
+    -- Chat sequence
+    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("kaboom?", "All")
+    task.wait(2) -- delay
+    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("yes nico", "All")
+    task.wait(2) -- delay
+    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("kaboom.", "All")
+    task.wait(2) -- delay
+
+    -- Explode everyone
+    for _, plr in ipairs(Players:GetPlayers()) do
+        RequestCommand:InvokeServer(";explode "..plr.Name)
+        task.wait(getCooldown())
+    end
+end)
+table.insert(allButtons, btnExplodeAll)
 y = y + 30
+
 
 -- Update scroll size so scrolling works
 scroll.CanvasSize = UDim2.new(0, 0, 0, y)
