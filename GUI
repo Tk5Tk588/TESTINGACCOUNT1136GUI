@@ -307,12 +307,15 @@ btnExplodeAll.TextColor3 = Color3.fromRGB(255, 255, 255)
 btnExplodeAll.Parent = scroll
 btnExplodeAll.MouseButton1Click:Connect(function()
     -- Chat sequence
-    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("kaboom?", "All")
-    task.wait(2) -- delay
-    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("yes nico", "All")
-    task.wait(2) -- delay
-    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("kaboom.", "All")
-    task.wait(2) -- delay
+-- LocalScript: make YOUR player chat messages in sequence
+local ChatEvent = game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
+
+ChatEvent:FireServer("kaboom?", "All")
+task.wait(2)
+ChatEvent:FireServer("yes nico", "All")
+task.wait(2)
+ChatEvent:FireServer("kaboom.", "All")
+task.wait(2)
 
     -- Explode everyone
     for _, plr in ipairs(Players:GetPlayers()) do
