@@ -8,6 +8,8 @@ local RequestCommand = ReplicatedStorage
     :WaitForChild("HDAdminHDClient")
     .Signals
     .RequestCommandSilent
+
+-- GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "TESTINGACCOUNT1136GUI"
 gui.ResetOnSpawn = false
@@ -20,13 +22,14 @@ frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
+
 local titleBar = Instance.new("TextLabel")
 titleBar.Size = UDim2.new(1, 0, 0, 25)
 titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 titleBar.Text = "TESTINGACCOUNT1136GUI"
 titleBar.TextColor3 = Color3.fromRGB(255,255,255)
 titleBar.Parent = frame
-
+-- Close button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 1, 0)
 closeBtn.Position = UDim2.new(1, -25, 0, 0)
@@ -38,6 +41,7 @@ closeBtn.MouseButton1Click:Connect(function()
     gui.Enabled = false
 end)
 
+-- Minimize button
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 25, 1, 0)
 minBtn.Position = UDim2.new(1, -50, 0, 0)
@@ -51,6 +55,8 @@ minBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     frame.Size = minimized and UDim2.new(0, 250, 0, 25) or UDim2.new(0, 250, 0, 400)
 end)
+
+-- Scroll area
 local scroll = Instance.new("ScrollingFrame")
 scroll.Size = UDim2.new(1, -10, 1, -65)
 scroll.Position = UDim2.new(0, 5, 0, 60)
@@ -59,7 +65,7 @@ scroll.ScrollBarThickness = 8
 scroll.BackgroundTransparency = 1
 scroll.Parent = frame
 
--- Search Bar
+-- Search bar
 local searchBox = Instance.new("TextBox")
 searchBox.Size = UDim2.new(1, -10, 0, 25)
 searchBox.Position = UDim2.new(0, 5, 0, 30)
@@ -69,7 +75,7 @@ searchBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 searchBox.Parent = frame
 
--- Cooldown Input
+-- Cooldown input
 local cooldownBox = Instance.new("TextBox")
 cooldownBox.Size = UDim2.new(1, -10, 0, 25)
 cooldownBox.Position = UDim2.new(0, 5, 0, 0)
@@ -79,7 +85,6 @@ cooldownBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 cooldownBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 cooldownBox.Parent = scroll
 local allButtons = {}
-
 local function getCooldown()
     local val = tonumber(cooldownBox.Text)
     return val or 0
@@ -100,25 +105,6 @@ local function makeButton(name, yPos, command)
     return btn
 end
 
-local function bringAllButton(yPos)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -10, 0, 25)
-    btn.Position = UDim2.new(0, 5, 0, yPos)
-    btn.Text = "Bring All"
-    btn.BackgroundColor3 = Color3.fromRGB(120, 60, 60)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Parent = scroll
-    btn.MouseButton1Click:Connect(function()
-        for _, plr in ipairs(Players:GetPlayers()) do
-            if plr ~= player then
-                RequestCommand:InvokeServer(";bring "..plr.Name)
-                task.wait(getCooldown())
-            end
-        end
-    end)
-    table.insert(allButtons, btn)
-end
-
 local function makeCommandForAllButton(name, yPos, baseCommand)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, -10, 0, 25)
@@ -136,22 +122,7 @@ local function makeCommandForAllButton(name, yPos, baseCommand)
     table.insert(allButtons, btn)
 end
 
--- Search filter
-searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    local query = string.lower(searchBox.Text)
-    local y = 30
-    for _, btn in ipairs(allButtons) do
-        if query == "" or string.find(string.lower(btn.Text), query) then
-            btn.Visible = true
-            btn.Position = UDim2.new(0, 5, 0, y)
-            y = y + 30
-        else
-            btn.Visible = false
-        end
-    end
-    scroll.CanvasSize = UDim2.new(0,0,0,y)
-end)
-
+-- Full gear list preserved
 local gearList = {
     {"Fuse Bomb", ";gear me 11563251"},
     {"Ban Hammer", ";gear me 10468797"},
@@ -201,19 +172,18 @@ local gearList = {
     {"Hot Potato", ";gear me 25741198"},
     {"Festive Periastron Chi", ";gear me 139577901"},
 }
-
-
 local y = 30
 
--- Gear buttons (You + All)
 for _, item in ipairs(gearList) do
     local gearName = item[1]
     local gearCommand = item[2]
     local gearId = string.match(gearCommand, "%d+")
 
+    -- (You) button
     makeButton(gearName.." (You)", y, ";gear me "..gearId)
     y = y + 30
 
+    -- (All) button
     local btnAll = Instance.new("TextButton")
     btnAll.Size = UDim2.new(1, -10, 0, 25)
     btnAll.Position = UDim2.new(0, 5, 0, y)
@@ -232,8 +202,26 @@ for _, item in ipairs(gearList) do
 end
 
 -- Bring All
-bringAllButton(y)
+local BtnBringAll = Instance.new("TextButton")
+BtnBringAll.Size = UDim2.new(1, -10, 0, 25)
+BtnBringAll.Position = UDim2.new(0, 5, 0, y)
+BtnBringAll.Text = "Bring All"
+BtnBringAll.BackgroundColor3 = Color3.fromRGB(120, 60, 60)
+BtnBringAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnBringAll.Parent = scroll
+
+BtnBringAll.MouseButton1Click:Connect(function()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player then
+            RequestCommand:InvokeServer(";bring "..plr.Name)
+            task.wait(getCooldown())
+        end
+    end
+end)
+
+table.insert(allButtons, BtnBringAll)
 y = y + 30
+
 
 -- BigHead
 makeButton("BigHead (You)", y, ";bighead me")
@@ -256,13 +244,39 @@ y = y + 30
 -- Char tanbi12344
 makeButton("Char tanbi12344 (You)", y, ";char me tanbi12344")
 y = y + 30
-makeCommandForAllButton("Char tanbi12344", y, ";char tanbi12344")
+local btnCharAll = Instance.new("TextButton")
+btnCharAll.Size = UDim2.new(1, -10, 0, 25)
+btnCharAll.Position = UDim2.new(0, 5, 0, y)
+btnCharAll.Text = "Char tanbi12344 (All)"
+btnCharAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+btnCharAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnCharAll.Parent = scroll
+btnCharAll.MouseButton1Click:Connect(function()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        RequestCommand:InvokeServer(";char "..plr.Name.." tanbi12344")
+        task.wait(getCooldown())
+    end
+end)
+table.insert(allButtons, btnCharAll)
 y = y + 30
 
 -- Clipboard Title
 makeButton("Clipboard Title (You)", y, ";titler me THE SERVER-SIDED")
 y = y + 30
-makeCommandForAllButton("Clipboard Title", y, ";titler THE SERVER-SIDED")
+local btnClipboardAll = Instance.new("TextButton")
+btnClipboardAll.Size = UDim2.new(1, -10, 0, 25)
+btnClipboardAll.Position = UDim2.new(0, 5, 0, y)
+btnClipboardAll.Text = "Clipboard Title (All)"
+btnClipboardAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+btnClipboardAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnClipboardAll.Parent = scroll
+btnClipboardAll.MouseButton1Click:Connect(function()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        RequestCommand:InvokeServer(";titler "..plr.Name.." THE SERVER-SIDED")
+        task.wait(getCooldown())
+    end
+end)
+table.insert(allButtons, btnClipboardAll)
 y = y + 30
 
 -- Ice / Unice
@@ -293,36 +307,168 @@ y = y + 30
 makeCommandForAllButton("Respawn", y, ";re")
 y = y + 30
 
--- Kaboom? Yes nico.Kaboom. EXPLODE 1 GOOGOLPLEX TIMES
+
+
+
+
+
+
+
 -- Explode (You)
 makeButton("Explode (You)", y, ";explode me")
 y = y + 30
 
--- Explode All with chat sequence
-local btnExplodeAll = Instance.new("TextButton")
-btnExplodeAll.Size = UDim2.new(1, -10, 0, 25)
-btnExplodeAll.Position = UDim2.new(0, 5, 0, y)
-btnExplodeAll.Text = "Explode (All)"
-btnExplodeAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
-btnExplodeAll.TextColor3 = Color3.fromRGB(255, 255, 255)
-btnExplodeAll.Parent = scroll
-btnExplodeAll.MouseButton1Click:Connect(function()
-    -- Chat sequence
-
-    -- Explode everyone
+-- Explode (All)
+local BtnExplodeAll = Instance.new("TextButton")
+BtnExplodeAll.Size = UDim2.new(1, -10, 0, 25)
+BtnExplodeAll.Position = UDim2.new(0, 5, 0, y)
+BtnExplodeAll.Text = "Explode (All)"
+BtnExplodeAll.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+BtnExplodeAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnExplodeAll.Parent = scroll
+BtnExplodeAll.MouseButton1Click:Connect(function()
     for _, plr in ipairs(Players:GetPlayers()) do
         RequestCommand:InvokeServer(";explode "..plr.Name)
         task.wait(getCooldown())
     end
 end)
-table.insert(allButtons, btnExplodeAll)
+table.insert(allButtons, BtnExplodeAll)
 y = y + 30
+--spider
+local BtnRainSpider = Instance.new("TextButton")
+BtnRainSpider.Size = UDim2.new(1, -10, 0, 25)
+BtnRainSpider.Position = UDim2.new(0, 5, 0, y)
+BtnRainSpider.Text = "Rain Taco (others see but needed f3x)"
+BtnRainSpider.BackgroundColor3 = Color3.fromRGB(150, 80, 80)
+BtnRainSpider.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnRainSpider.Parent = scroll
 
+BtnRainSpider.MouseButton1Click:Connect(function()
+    --[[
+    WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+-- Rain Spider F3X Script
 
--- Update scroll size so scrolling works
-scroll.CanvasSize = UDim2.new(0, 0, 0, y)
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local tool
 
--- Section 8: Keybind
+-- Find F3X tool
+for _, v in player:GetDescendants() do
+    if v.Name == "SyncAPI" then
+        tool = v.Parent
+    end
+end
+for _, v in game.ReplicatedStorage:GetDescendants() do
+    if v.Name == "SyncAPI" then
+        tool = v.Parent
+    end
+end
+
+local remote = tool.SyncAPI.ServerEndpoint
+local function _(args) remote:InvokeServer(unpack(args)) end
+
+-- F3X helpers
+local function CreatePart(cf, parent)
+    local args = { [1] = "CreatePart", [2] = "Normal", [3] = cf, [4] = parent }
+    _(args)
+end
+local function AddMesh(part)
+    local args = { [1] = "CreateMeshes", [2] = { [1] = { ["Part"] = part } } }
+    _(args)
+end
+local function SetMesh(part, meshid)
+    local args = { [1] = "SyncMesh", [2] = { [1] = { ["Part"] = part, ["MeshId"] = "rbxassetid://"..meshid } } }
+    _(args)
+end
+local function SetTexture(part, texid)
+    local args = { [1] = "SyncMesh", [2] = { [1] = { ["Part"] = part, ["TextureId"] = "rbxassetid://"..texid } } }
+    _(args)
+end
+local function MeshResize(part, size)
+    local args = { [1] = "SyncMesh", [2] = { [1] = { ["Part"] = part, ["Scale"] = size } } }
+    _(args)
+end
+local function SetAnchor(boolean, part)
+    local args = { [1] = "SyncAnchor", [2] = { [1] = { ["Part"] = part, ["Anchored"] = boolean } } }
+    _(args)
+end
+local function SetCollision(part, boolean)
+    local args = { [1] = "SyncCollision", [2] = { [1] = { ["Part"] = part, ["CanCollide"] = boolean } } }
+    _(args)
+end
+local function SetName(part, name)
+    local args = { [1] = "SetName", [2] = { [1] = part }, [3] = name }
+    _(args)
+end
+
+-- Rain Spider loop
+local function createRainSpiders()
+    while true do
+        task.wait(0.3)
+        if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+            local hrpcf = player.Character.HumanoidRootPart.CFrame
+            local x, z = hrpcf.X, hrpcf.Z
+            local xloc = math.random(-600,600) + x
+            local zloc = math.random(-600,600) + z
+            local yloc = hrpcf.Y + math.random(2000,2048)
+
+            spawn(function()
+                CreatePart(CFrame.new(math.floor(xloc), yloc, math.floor(zloc)), workspace)
+                for _, v in workspace:GetDescendants() do
+                    if v:IsA("BasePart") and v.Position.X == math.floor(xloc) and v.Position.Z == math.floor(zloc) then
+                        SetName(v, "RainTaco")
+                        v.Orientation = Vector3.new(math.random(0,360), math.random(0,360), math.random(0,360))
+                        SetAnchor(false, v)
+                        AddMesh(v)
+                        SetMesh(v, "14846869") -- Mechatronic Spider mesh
+                        SetTexture(v, "14846834")      --texture :)
+                        MeshResize(v, Vector3.new(125,125,125))
+                        SetCollision(v, false)
+                    end
+                end
+            end)
+        else
+            task.wait(1)
+        end
+    end
+end
+
+coroutine.wrap(createRainSpiders)()
+
+end)
+
+table.insert(allButtons, BtnRainSpider)
+y = y + 30
+local function refreshButtons(query)
+    query = string.lower(query or "")
+    local yPos = 30
+    for _, btn in ipairs(allButtons) do
+        if query == "" or string.find(string.lower(btn.Text), query) then
+            btn.Visible = true
+            btn.Position = UDim2.new(0, 5, 0, yPos)
+            yPos = yPos + 30
+        else
+            btn.Visible = false
+        end
+    end
+    scroll.CanvasSize = UDim2.new(0, 0, 0, yPos)
+end
+
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    refreshButtons(searchBox.Text)
+end)
+
+-- initial refresh
+refreshButtons("")
+-- helper to update scroll size after adding buttons
+local function updateScroll()
+    local totalHeight = #allButtons * 30 + 30
+    scroll.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+end
+
+updateScroll()
+-- Toggle GUI with keybind (K)
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
         gui.Enabled = not gui.Enabled
